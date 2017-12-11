@@ -16,7 +16,7 @@ class NetwProg
         Console.Title = "NetChange " + myPortNr;
         for(int i = 1; i < args.Length; i++)
         {
-
+            //logic
         }
         Console.ReadLine();
     }
