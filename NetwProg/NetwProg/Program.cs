@@ -14,6 +14,12 @@ class NetwProg
 
     public NetwProg(string[] args)
     {
+        myPortNr = int.Parse(args[0]);
+        Console.Title = "NetChange " + myPortNr;
+        for(int i = 1; i < args.Length; i++)
+        {
+            neighs.Add(int.Parse(args[i]), null); 
+        }
         Console.ReadLine();
     }
 
