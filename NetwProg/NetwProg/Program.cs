@@ -9,19 +9,7 @@ class NetwProg
 {
     public static int myPortNr;
     public static Dictionary<int, Connection> neighs = new Dictionary<int, Connection>();
-    Dictionary<int, int> routingNeighTable = new Dictionary<int, int>();
-
-
-    public NetwProg(string[] args)
-    {
-        myPortNr = int.Parse(args[0]);
-        Console.Title = "NetChange " + myPortNr;
-        for(int i = 1; i < args.Length; i++)
-        {
-            neighs.Add(int.Parse(args[i]), null); 
-        }
-        Console.ReadLine();
-    }
+    public static Dictionary<int, Tuple<int, int>> routingNeighTable = new Dictionary<int, Tuple<int, int>>();            //KEY: destinationPort, VALUE: (neighbour to send to, #Hops)
 
     static void Main(string[] args)
     {
@@ -38,10 +26,12 @@ class NetwProg
         myPortNr = int.Parse(args[0]);
         Console.Title = "NetChange " + myPortNr;
         new Server(myPortNr);
-        for (int i = 1; i < args.Length; i++)
+        routingNeighTable.Add(myPortNr, Tuple.Create(myPortNr, 0));                                         //Trivial case
+        for(int i = 1; i < args.Length; i++)
         {
-            int port = int.Parse(args[i]);
-            neighs.Add(port, null);
+            int connectedPort = int.Parse(args[i]);
+            neighs.Add(connectedPort, null);
+            routingNeighTable.Add(connectedPort, Tuple.Create(connectedPort, 1));                           //Could be calculated via NetChange but this is a slightly bit more efficient                     
         }
     }
 
@@ -52,18 +42,41 @@ class NetwProg
             string[] input = Console.ReadLine().Split(new char[] { ' ' }, 3);
             switch (input[0])
             {
+                case "R":
+                    PrintRoutingTable();
+                    break;
                 case "B":
-                    int portMsg = int.Parse(input[1]);
-                    if (!neighs.ContainsKey(portMsg))
-                    {
-                        Console.WriteLine("Error: Unknown port number");
-                        break;
-                    }
-                    if (neighs[portMsg] == null)
-                        neighs[portMsg] = new Connection(portMsg);
-                    neighs[portMsg].Write.WriteLine(input[2]);
+                    MessageService(input[1], input[2]);
                     break;
             }
         }
+    }
+
+    private static void PrintRoutingTable()
+    {
+        foreach (KeyValuePair<int, Tuple<int, int>> entry in routingNeighTable)
+        {
+            if (entry.Value.Item2 != 0 && entry.Value.Item2 != 20)
+            {                                        //Check if num of hops are not "infinity" or 0 (local)
+                Console.WriteLine(entry.Key + " " + entry.Value.Item2 + " " + entry.Value.Item1);
+                continue;
+            }
+            if (entry.Value.Item2 != 0)
+                continue;
+            Console.WriteLine(entry.Key + " " + 0 + " local");
+        }
+    }
+
+    public static void MessageService(string destinationPort, string message)
+    {
+        int portMsg = int.Parse(destinationPort);
+        if (!neighs.ContainsKey(portMsg))
+        {
+            Console.WriteLine("Error: Unknown port number");
+            return;
+        }
+        if (neighs[portMsg] == null)
+            neighs[portMsg] = new Connection(portMsg);
+        neighs[portMsg].Write.WriteLine(destinationPort + " " + message);
     }
 }

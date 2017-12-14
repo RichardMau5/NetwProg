@@ -40,7 +40,13 @@ class Connection
         try
         {
             while (true)
-                Console.WriteLine(Read.ReadLine());
+            {
+                string[] line = Read.ReadLine().Split(new char[] { ' ' }, 2);
+                if (int.Parse(line[0]) == NetwProg.myPortNr)
+                    Console.WriteLine(line[1]);
+                else
+                    NetwProg.MessageService(line[0], line[1]);
+            }
         }
         catch { } // Verbinding is kennelijk verbroken
     }
