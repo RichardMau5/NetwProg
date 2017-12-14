@@ -41,11 +41,17 @@ class Connection
         {
             while (true)
             {
-                string[] line = Read.ReadLine().Split(new char[] { ' ' }, 2);
-                if (int.Parse(line[0]) == NetwProg.myPortNr)
-                    Console.WriteLine(line[1]);
-                else
-                    NetwProg.MessageService(line[0], line[1]);
+                string[] line = Read.ReadLine().Split(new char[] { ' ' }, 3);
+                switch (line[0])
+                {
+                    case "Msg":
+                        if (int.Parse(line[1]) == NetwProg.myPortNr)
+                            Console.WriteLine(line[2]);
+                        else
+                            NetwProg.MessageService(line[1], line[2]);
+                        break;
+                }
+            
             }
         }
         catch { } // Verbinding is kennelijk verbroken

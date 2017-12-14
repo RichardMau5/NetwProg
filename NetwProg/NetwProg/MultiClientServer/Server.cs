@@ -31,7 +31,12 @@ class Server
             Console.WriteLine("Client maakt verbinding: " + zijnPoort);
 
             // Zet de nieuwe verbinding in de verbindingslijst
-            if(NetwProg.neighs[zijnPoort] == null)
+            if (!NetwProg.neighs.ContainsKey(zijnPoort))
+                NetwProg.neighs.Add(zijnPoort, new Connection(clientIn, clientOut));
+            if (!NetwProg.routingNeighTable.ContainsKey(zijnPoort))
+                NetwProg.routingNeighTable.Add(zijnPoort, Tuple.Create(zijnPoort, 1));
+            else NetwProg.routingNeighTable[zijnPoort] = Tuple.Create(zijnPoort, 1);
+            if (NetwProg.neighs[zijnPoort] == null)
                 NetwProg.neighs[zijnPoort] = new Connection(clientIn, clientOut);
         }
     }
