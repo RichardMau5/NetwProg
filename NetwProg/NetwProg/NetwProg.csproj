@@ -43,14 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDaDTable.cs" />
     <Compile Include="MultiClientServer\Connection.cs" />
     <Compile Include="MultiClientServer\Server.cs" />
+    <Compile Include="NeighHopInfoTable.cs" />
+    <Compile Include="NetChange.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="MultiClientServer\Standard.bat" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

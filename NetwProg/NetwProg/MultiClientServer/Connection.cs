@@ -34,7 +34,7 @@ class Connection
 
     // LET OP: Nadat er verbinding is gelegd, kun je vergeten wie er client/server is (en dat kun je aan het Connection-object dus ook niet zien!)
 
-    // Deze loop leest wat er binnenkomt en print dit
+    // This loop receives messages formatted according to protocol
     public void ReaderThread()
     {
         try
@@ -48,12 +48,23 @@ class Connection
                         if (int.Parse(line[1]) == NetwProg.myPortNr)
                             Console.WriteLine(line[2]);
                         else
-                            NetwProg.MessageService(line[1], line[2]);
+                            ProtocolFunctions.MessageService(line[1], line[2]);
+                        break;
+                    case "Del":
+                        ProtocolFunctions.DeleteConnect(int.Parse(line[1]), false);
+                        break;
+                    case "mdist":
+                        string[] lineEx = line[2].Split(new char[] { ' ' }, 3);
+                        int fromPort = int.Parse(line[1]);
+                        int toPort = int.Parse(lineEx[0]);
+                        int distance = int.Parse(lineEx[1]);
+                        Console.WriteLine("//mdist fromPort: " + fromPort + " toPort: " + toPort + " distance: " + distance);
+                        NetChange.DistanceChange(fromPort, toPort, distance);
                         break;
                 }
             
             }
         }
-        catch { } // Verbinding is kennelijk verbroken
+        catch { } // Connection apperently has been closed
     }
 }
