@@ -35,7 +35,6 @@ public static class ProtocolFunctions
         NetwProg.routingTable.SetEntry(newNeighPortNr, newNeighPortNr, 1);
     }
 
-
     public static void DeleteConnect(int neighDisconnect, bool sendToNeigh = true)
     {
         if (!NetwProg.neighs.ContainsKey(neighDisconnect))
@@ -46,6 +45,14 @@ public static class ProtocolFunctions
         if (sendToNeigh)
             NetwProg.neighs[neighDisconnect].Write.WriteLine("Del " + NetwProg.myPortNr);
         NetwProg.neighs.Remove(neighDisconnect);
+        NetChange.neighRoutingTable.RemoveNeigh(neighDisconnect);
+        NetChange.Disconnect(neighDisconnect);
         Console.WriteLine("Verbroken " + neighDisconnect);
+    }
+
+    internal static void TempWriteAllNeighs()
+    {
+        foreach (int x in NetChange.allNodes)
+            Console.WriteLine("// Node " + x + " is in Network");
     }
 }

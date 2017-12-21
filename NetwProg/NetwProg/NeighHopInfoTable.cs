@@ -15,10 +15,13 @@ class NeighHopInfoTable
     {
         if (!hopInfoTable.ContainsKey(neighbour))
             hopInfoTable.Add(neighbour, new Dictionary<int, int>());
-        if(!hopInfoTable[neighbour].ContainsKey(destination))
+        if (!hopInfoTable[neighbour].ContainsKey(destination))
             hopInfoTable[neighbour].Add(destination, hops);
         else
-            hopInfoTable[neighbour][destination] = hops;
+        {
+            lock(hopInfoTable[neighbour])
+                hopInfoTable[neighbour][destination] = hops;
+        }
     }
 
     public Tuple<int, int> GetMinimumDistanceTo(int toPort)
@@ -36,5 +39,11 @@ class NeighHopInfoTable
             }
         }
         return Tuple.Create(port, minimum);
+    }
+
+    public void RemoveNeigh(int neighPort)
+    {
+        if (hopInfoTable.ContainsKey(neighPort))
+            hopInfoTable.Remove(neighPort);
     }
 }

@@ -8,11 +8,11 @@ class Server
 {
     public Server(int port)
     {
-        // Listen on your port to any incoming connections
+        // Luister op de opgegeven poort naar verbindingen
         TcpListener server = new TcpListener(IPAddress.Any, port);
         server.Start();
 
-        // Starts this listener on a new thread
+        // Start een aparte thread op die verbindingen aanneemt
         new Thread(() => AcceptLoop(server)).Start();
     }
 
@@ -25,14 +25,19 @@ class Server
             StreamWriter clientOut = new StreamWriter(client.GetStream());
             clientOut.AutoFlush = true;
 
-            // The server doesn't know the client who's attempting to connect, it's part of the protocol of the client to let us know who he is
+            // De server weet niet wat de poort is van de client die verbinding maakt, de client geeft dus als onderdeel van het protocol als eerst een bericht met zijn poort
             int zijnPoort = int.Parse(clientIn.ReadLine().Split()[1]);
 
             Console.WriteLine("Verbonden: " + zijnPoort);
 
-            // Add this newly established connection to the list
-            if(!NetwProg.neighs.ContainsKey(zijnPoort))
+            // Zet de nieuwe verbinding in de verbindingslijst
+            if (!NetwProg.neighs.ContainsKey(zijnPoort))
                 NetwProg.neighs.Add(zijnPoort, new Connection(clientIn, clientOut));
+            if (!NetwProg.routingNeighTable.ContainsKey(zijnPoort))
+                NetwProg.routingNeighTable.Add(zijnPoort, Tuple.Create(zijnPoort, 1));
+            else NetwProg.routingNeighTable[zijnPoort] = Tuple.Create(zijnPoort, 1);
+            if (NetwProg.neighs[zijnPoort] == null)
+                NetwProg.neighs[zijnPoort] = new Connection(clientIn, clientOut);
         }
     }
 }

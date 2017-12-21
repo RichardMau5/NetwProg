@@ -7,12 +7,15 @@ using System.Collections.Generic;
 /// </summary>
 class IDaDTable
 {
-    private ConcurrentDictionary<int, Tuple<int, int>> routingNeighTable = new ConcurrentDictionary<int, Tuple<int, int>>();
+    private Dictionary<int, Tuple<int, int>> routingNeighTable = new Dictionary<int, Tuple<int, int>>();
 
     public void SetEntry(int destination, int bestNeighbour, int hops)
     {
-        if (!routingNeighTable.TryAdd(destination, Tuple.Create(bestNeighbour, hops)))
-            routingNeighTable[destination] = Tuple.Create(bestNeighbour, hops);
+        if (!routingNeighTable.ContainsKey(destination))
+            routingNeighTable.Add(destination, Tuple.Create(bestNeighbour, hops));
+        else
+            lock (routingNeighTable[destination])
+                routingNeighTable[destination] = Tuple.Create(bestNeighbour, hops);
     }
 
     public int GetBestNeigh(int destination) => routingNeighTable[destination].Item1;

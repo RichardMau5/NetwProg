@@ -58,11 +58,10 @@ class Connection
                         int fromPort = int.Parse(line[1]);
                         int toPort = int.Parse(lineEx[0]);
                         int distance = int.Parse(lineEx[1]);
-                        Console.WriteLine("//mdist fromPort: " + fromPort + " toPort: " + toPort + " distance: " + distance);
+                        Console.WriteLine("// mdist fromPort: " + fromPort + " toPort: " + toPort + " distance: " + distance);
                         NetChange.DistanceChange(fromPort, toPort, distance);
                         break;
-                }
-            
+                }          
             }
         }
         catch { } // Connection apperently has been closed
