@@ -33,11 +33,11 @@ public static class ProtocolFunctions
     public static void NewConnect(int newNeighPortNr)
     {
         NetwProg.neighs.Add(newNeighPortNr, new Connection(newNeighPortNr));
-        NetwProg.routingTable.SetEntry(newNeighPortNr, newNeighPortNr, 1);
+        NetChange.routingTable.SetEntry(newNeighPortNr, newNeighPortNr, 1);
         foreach (int v in NetChange.allNodes)
         {
             NetChange.neighRoutingTable.Update(newNeighPortNr, v, NetChange.N);
-            NetwProg.neighs[newNeighPortNr].Write.WriteLine("mdist " + NetwProg.myPortNr + "  " + v + " " + NetChange.routingTable.GetHops(v));
+            NetwProg.neighs[newNeighPortNr].Write.WriteLine("mdist " + NetwProg.myPortNr + " " + v + " " + NetChange.routingTable.GetHops(v));
         }
     }
 

@@ -41,7 +41,9 @@ class Connection
         {
             while (true)
             {
-                string[] line = Read.ReadLine().Split(new char[] { ' ' }, 3);
+                string test = Read.ReadLine();
+                Console.WriteLine("// " + test);
+                string[] line = test.Split(new char[] { ' ' }, 3);
                 switch (line[0])
                 {
                     case "Msg":
