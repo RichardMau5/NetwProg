@@ -21,18 +21,24 @@ public static class ProtocolFunctions
     public static void MessageService(string destinationPort, string message)
     {
         int portMsg = int.Parse(destinationPort);
-        if (!NetwProg.neighs.ContainsKey(portMsg))
+        if (NetChange.routingTable.GetHops(portMsg) >= 20)
         {
             Console.WriteLine("Poort " + destinationPort + " is niet bekend");
             return;
         }
-        NetwProg.neighs[portMsg].Write.WriteLine("Msg " + destinationPort + " " + message);
+        int forwardPort = NetChange.routingTable.GetBestNeigh(portMsg);
+        NetwProg.neighs[forwardPort].Write.WriteLine("Msg " + destinationPort + " " + message);
     }
 
     public static void NewConnect(int newNeighPortNr)
     {
         NetwProg.neighs.Add(newNeighPortNr, new Connection(newNeighPortNr));
         NetwProg.routingTable.SetEntry(newNeighPortNr, newNeighPortNr, 1);
+        foreach (int v in NetChange.allNodes)
+        {
+            NetChange.neighRoutingTable.Update(newNeighPortNr, v, NetChange.N);
+            NetwProg.neighs[newNeighPortNr].Write.WriteLine("mdist " + NetwProg.myPortNr + "  " + v + " " + NetChange.routingTable.GetHops(v));
+        }
     }
 
     public static void DeleteConnect(int neighDisconnect, bool sendToNeigh = true)

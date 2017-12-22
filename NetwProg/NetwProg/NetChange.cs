@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 class NetChange
 {
-    public static int N = 20;                                                                                                     //Number of max Nodes
+    public static int N = 20;                                                                                                    //Number of max Nodes
     public static HashSet<int> allNodes = new HashSet<int>();
     public static IDaDTable routingTable = new IDaDTable();                                                                      //Your own routing table
-    public static NeighHopInfoTable neighRoutingTable = new NeighHopInfoTable(NetwProg.neighs);     //The preferred routes of your neighbours
+    public static NeighHopInfoTable neighRoutingTable = new NeighHopInfoTable(NetwProg.neighs);                                  //The preferred routes of your neighbours
 
     public static void Init()
     {
@@ -17,7 +17,6 @@ class NetChange
             kvp.Value.Write.WriteLine("mdist " + NetwProg.myPortNr + " " + NetwProg.myPortNr + " " + 0);
             allNodes.Add(kvp.Key);
         }
-
     }
 
     private static void Recompute(int toPort)
@@ -29,13 +28,13 @@ class NetChange
         {
             Tuple<int, int> portAndMinDist = neighRoutingTable.GetMinimumDistanceTo(toPort);
             int d = 1 + portAndMinDist.Item2;
-            if (d <= N)
+            if (d < N)
                 routingTable.SetEntry(toPort, portAndMinDist.Item1, d);
             else
-                return;
-            if(d != oldD)
+                routingTable.SetEntry(toPort, -1, N);
+            if(routingTable.GetHops(toPort) != oldD)
                 foreach(KeyValuePair<int, Connection> kvp in NetwProg.neighs)
-                    kvp.Value.Write.WriteLine("mdist " + NetwProg.myPortNr + " " + toPort + " " + d);
+                    kvp.Value.Write.WriteLine("mdist " + NetwProg.myPortNr + " " + toPort + " " + routingTable.GetHops(toPort));
         }
     }
 
